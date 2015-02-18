@@ -1,6 +1,6 @@
 <?php namespace App\Services\Twitter\Search;
 
-class Hashtags extends SearchEngine {
+class Mentions extends SearchEngine {
 
     public function q($q = null)
     {

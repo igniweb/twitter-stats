@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateHashtagTweetTable extends Migration {
+class CreateMentionsTable extends Migration {
 
     /**
      * Run the migrations.
@@ -12,12 +12,11 @@ class CreateHashtagTweetTable extends Migration {
      */
     public function up()
     {
-        Schema::create('hashtag_tweet', function(Blueprint $table)
+        Schema::create('mentions', function(Blueprint $table)
         {
-            $table->integer('hashtag_id')->unsigned();
-            $table->integer('tweet_id')->unsigned();
+            $table->increments('id');
+            $table->string('name');
 
-            $table->primary(['hashtag_id', 'tweet_id']);
             $table->engine = 'InnoDB';
         });
     }
@@ -29,7 +28,7 @@ class CreateHashtagTweetTable extends Migration {
      */
     public function down()
     {
-        Schema::drop('hashtag_tweet');
+        Schema::drop('mentions');
     }
 
 }

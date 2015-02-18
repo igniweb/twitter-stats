@@ -1,46 +1,34 @@
 <html>
-	<head>
-		<link href='//fonts.googleapis.com/css?family=Lato:100' rel='stylesheet' type='text/css'>
-
-		<style>
-			body {
-				margin: 0;
-				padding: 0;
-				width: 100%;
-				height: 100%;
-				color: #B0BEC5;
-				display: table;
-				font-weight: 100;
-				font-family: 'Lato';
-			}
-
-			.container {
-				text-align: center;
-				display: table-cell;
-				vertical-align: middle;
-			}
-
-			.content {
-				text-align: center;
-				display: inline-block;
-			}
-
-			.title {
-				font-size: 96px;
-				margin-bottom: 40px;
-			}
-
-			.quote {
-				font-size: 24px;
-			}
-		</style>
-	</head>
-	<body>
-		<div class="container">
-			<div class="content">
-				<div class="title">Laravel 5</div>
-				<div class="quote">{{ Inspiring::quote() }}</div>
-			</div>
-		</div>
-	</body>
+    <head>
+        <meta charset="utf-8">
+        <title>Twitter stats</title>
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400" rel="stylesheet" type="text/css">
+        <style>
+            body { margin: 0; padding: 0; width: 100%; height: 100%; color: #777; font-weight: normal; font-family: 'Open Sans'; }
+            .container { margin: 2em; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>#EnvoyeSpecial 2015-02-12 - 2015-02-14</h1>
+            <h2>Top tweets</h2>
+            <ul class="committed">
+                @foreach ($committed as $tweet)
+                    <li title="{{ $tweet['user_account'] }}"><strong>{{ $tweet['commitments'] }}</strong> {{ $tweet['text'] }}</li>
+                @endforeach
+            </ul>
+            <h2>Hashtags</h2>
+            <ul class="hashtags">
+                @foreach ($hashtags as $hashtag)
+                    <li><strong>{{ $hashtag->occurences }}</strong> #{{ $hashtag->label }}</li>
+                @endforeach
+            </ul>
+            <h2>Tweets <small>({{ count($tweets) }})</small></h2>
+            <ul class="tweets">
+                @foreach ($tweets as $tweet)
+                    <li title="{{ $tweet->user_account }}">{{ $tweet->text }}</li>
+                @endforeach
+            </ul>
+        </div>
+    </body>
 </html>
