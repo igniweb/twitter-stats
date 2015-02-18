@@ -19,12 +19,11 @@ class TwitterFetch extends Command {
 
     public function handle()
     {
-        $q = $this->argument('q');
+        $q = trim($this->argument('q'));
         $from = $this->option('from');
         $to = $this->option('to');
         $debug = $this->option('debug');
 
-        $q = trim($q);
         $from = is_string($from) ? Carbon::createFromFormat('Y-m-d', $from)->setTime(0, 0, 0) : $from;
         $to = is_string($to) ? Carbon::createFromFormat('Y-m-d', $to)->setTime(0, 0, 0) : $to;
 
@@ -41,6 +40,11 @@ class TwitterFetch extends Command {
             $searchEngine = new SearchEngine;
             $tweets = $searchEngine->search($q, $from, $to);
 
+            if ($debug)
+            {
+                $this->comment('Found ' . count($tweets) . ' tweets');
+            }
+
             $search = Search::create([
                 'q'       => $q,
                 'from'    => $searchFrom,
@@ -51,12 +55,10 @@ class TwitterFetch extends Command {
         }
         else
         {
-            $tweets = $search->tweets;
-        }
-
-        if ($debug)
-        {
-            $this->comment('Found ' . count($tweets) . ' tweets');
+            if ($debug)
+            {
+                $this->comment('Found ' . count($search->tweets) . ' tweets');
+            }
         }
     }
 
