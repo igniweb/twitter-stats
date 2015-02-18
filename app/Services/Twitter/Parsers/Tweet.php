@@ -2,11 +2,23 @@
 
 class Tweet {
 
+    protected $userParser;
+
+    protected $mediaParser;
+
+    protected $hashtagParser;
+
+    protected $mentionParser;
+
     public function __construct()
     {
         $this->userParser = new User;
 
         $this->mediaParser = new Media;
+
+        $this->hashtagParser = new Hashtag;
+
+        $this->mentionParser = new Mention;
     }
 
     public function parse($status)
@@ -28,39 +40,9 @@ class Tweet {
             'retweets'     => intval($status->retweet_count),
             'favorites'    => intval($status->favorite_count),
             'published_at' => date('Y-m-d H:i:s', strtotime($status->created_at)),
-            'hashtags'     => $this->hashtags($status),
-            'mentions'     => $this->mentions($status),
+            'hashtags'     => $this->hashtagParser->parse($status),
+            'mentions'     => $this->mentionParser->parse($status),
         ];
-    }
-
-    private function hashtags($status)
-    {
-        $hashtags = [];
-
-        if ( ! empty($status->entities->hashtags))
-        {
-            foreach ($status->entities->hashtags as $hashtag)
-            {
-                $hashtags[] = $hashtag->text;
-            }
-        }
-
-        return array_unique($hashtags);
-    }
-
-    private function mentions($status)
-    {
-        $mentions = [];
-
-        if ( ! empty($status->entities->user_mentions))
-        {
-            foreach ($status->entities->user_mentions as $mention)
-            {
-                $mentions[] = $mention->screen_name;
-            }
-        }
-
-        return array_unique($mentions);
     }
 
 }

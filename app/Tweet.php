@@ -22,4 +22,9 @@ class Tweet extends Model {
         return $this->belongsToMany('App\Mention', 'mention_tweet', 'tweet_id', 'mention_id');
     }
 
+    public function searches()
+    {
+        return $this->belongsToMany('App\Search', 'search_tweet', 'tweet_id', 'search_id');
+    }
+
 }

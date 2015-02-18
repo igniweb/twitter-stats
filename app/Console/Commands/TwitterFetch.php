@@ -3,9 +3,9 @@
 use DB;
 use App\Hashtag;
 use App\Mention;
+use App\Search;
 use App\Tweet;
-use App\Services\Twitter\Search\Hashtags;
-use App\Services\Twitter\Search\Mentions;
+use App\Services\Twitter\SearchEngine;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
@@ -24,6 +24,7 @@ class TwitterFetch extends Command {
         $to = $this->option('to');
         $debug = $this->option('debug');
 
+        $q = trim($q);
         $from = is_string($from) ? Carbon::createFromFormat('Y-m-d', $from)->setTime(0, 0, 0) : $from;
         $to = is_string($to) ? Carbon::createFromFormat('Y-m-d', $to)->setTime(0, 0, 0) : $to;
 
@@ -32,23 +33,31 @@ class TwitterFetch extends Command {
             $this->line('Search for "' . $q . '" from ' . $from->format('Y-m-d') . ' to ' . $to->format('Y-m-d'));
         }
 
-        $hashtagsSearchEngine = new Hashtags($from, $to);
-        /*
-        $tweets = $hashtagsSearchEngine->search($q);
-        if ($debug)
+        $searchFrom = $from->format('Y-m-d H:i:s');
+        $searchTo = $to->format('Y-m-d H:i:s');
+        $search = Search::where('q', '=', $q)->where('from', '=', $searchFrom)->where('to', '=', $searchTo)->first();
+        if (empty($search))
         {
-            $this->comment('Found ' . count($tweets) . ' tweets');
-        }
-        $this->persist($tweets);
-        */
+            $searchEngine = new SearchEngine;
+            $tweets = $searchEngine->search($q, $from, $to);
 
-        $mentionsSearchEngine = new Mentions($from, $to);
-        $tweets = $mentionsSearchEngine->search($q);
+            $search = Search::create([
+                'q'       => $q,
+                'from'    => $searchFrom,
+                'to'      => $searchTo,
+                'done_at' => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+            $this->persist($tweets, $search->id);
+        }
+        else
+        {
+            $tweets = $search->tweets;
+        }
+
         if ($debug)
         {
             $this->comment('Found ' . count($tweets) . ' tweets');
         }
-        $this->persist($tweets);
     }
 
     protected function getOptions()
@@ -67,10 +76,8 @@ class TwitterFetch extends Command {
         ];
     }
 
-    private function persist($tweets)
-    {   // @TODO Remove truncate and add table searchs (q, from , to) and search_tweet
-        Tweet::truncate();
-
+    private function persist($tweets, $searchId)
+    {
         foreach ($tweets as $tweet)
         {
             $hashtags = $tweet['hashtags'];
@@ -80,6 +87,11 @@ class TwitterFetch extends Command {
             $dbTweet = $this->saveTweet($tweet);
             $this->saveHashtags($hashtags, $dbTweet->id);
             $this->saveMentions($mentions, $dbTweet->id);
+
+            DB::table('search_tweet')->insert([
+                'search_id' => $searchId,
+                'tweet_id'  => $dbTweet->id,
+            ]);
         }
     }
 
