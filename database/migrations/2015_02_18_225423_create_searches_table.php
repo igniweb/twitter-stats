@@ -19,7 +19,7 @@ class CreateSearchesTable extends Migration {
             $table->dateTime('from');
             $table->dateTime('to');
             $table->longText('stats')->nullable();
-            $table->dateTime('done_at');
+            $table->timestamps();
 
             $table->engine = 'InnoDB';
         });

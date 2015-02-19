@@ -6,11 +6,11 @@ class Search extends Model {
 
     protected $table = 'searches';
 
-    public $timestamps = false;
+    public $timestamps = true;
 
-    protected $fillable = ['q', 'from', 'to', 'stats', 'done_at'];
+    protected $fillable = ['q', 'from', 'to', 'stats'];
 
-    protected $dates = ['from', 'to', 'done_at'];
+    protected $dates = ['from', 'to', 'created_at', 'updated_at'];
 
     public function tweets()
     {

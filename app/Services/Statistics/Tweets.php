@@ -6,27 +6,44 @@ class Tweets {
 
     public function commitments($searchId, $count = 10)
     {
-        $committed = [];
+        $commitments = [];
 
-        $pivots = [];
-        $indexed = [];
+        $tweets = DB::table('tweets')->select('id', 'retweets', 'favorites')->whereIn('id', $this->tweetIds($searchId))->get();
         foreach ($tweets as $tweet)
         {
-            $commitments = $tweet['retweets'] + $tweet['favorites'];
+            $tweetCommitments = ($tweet->retweets + $tweet->favorites);
 
-            $pivots[$tweet['id']] = $commitments;
-            $indexed[$tweet['id']] = $tweet->toArray();
+            if (count($commitments) < $count)
+            {
+                $commitments[$tweetCommitments] = $tweet->id;
+            }
+            else
+            {
+                $committedCounts = array_keys($commitments);
+                $leastCommittedCount = array_pop($committedCounts);
+                $leastCommittedTweetId = array_pop($commitments);
+
+                if ($tweetCommitments > $leastCommittedCount)
+                {
+                    $commitments[$tweetCommitments] = $tweet->id;
+                }
+                else
+                {
+                    $commitments[$leastCommittedCount] = $leastCommittedTweetId;
+                }
+            }
+
+            krsort($commitments);
         }
 
-        arsort($pivots);
-        $pivots = array_slice($pivots, 0, $count, true);
+        return $commitments;
+    }
 
-        foreach ($pivots as $tweetId => $commitments)
-        {
-            $committed[] = $indexed[$tweetId] + ['commitments' => $commitments];
-        }
+    private function tweetIds($searchId)
+    {
+        $tweets = DB::table('search_tweet')->select('tweet_id')->where('search_id', '=', $searchId)->get();
 
-        return $committed;
+        return array_pluck($tweets, 'tweet_id');
     }
 
 }
