@@ -37,7 +37,7 @@ class TwitterFetch extends Command {
         $search = Search::where('q', '=', $q)->where('from', '=', $searchFrom)->where('to', '=', $searchTo)->first();
         if (empty($search))
         {
-            $searchEngine = new SearchEngine;
+            $searchEngine = new SearchEngine($debug);
             $tweets = $searchEngine->search($q, $from, $to);
 
             if ($debug)

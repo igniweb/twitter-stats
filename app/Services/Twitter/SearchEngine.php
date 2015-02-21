@@ -13,14 +13,18 @@ class SearchEngine {
 
     protected $to;
 
+    protected $debug;
+
     private $twitter;
 
     private $parser;
 
     private $maxId;
 
-    public function __construct()
+    public function __construct($debug = false)
     {
+        $this->debug = $debug;
+
         $this->twitter = new Twitter;
 
         $this->parser = new TweetParser;
@@ -102,6 +106,11 @@ class SearchEngine {
         else
         {
             $params['until'] = $this->to->addDays(1)->format('Y-m-d');
+        }
+
+        if ($this->debug)
+        {
+            print_r($params);
         }
 
         return $params;
