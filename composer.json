@@ -1,7 +1,7 @@
 {
-    "name": "laravel/laravel",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "name": "igniweb/twitter-stats",
+    "description": "Statistics about Twitter hashtags and mentions",
+    "keywords": ["igniweb", "twitter", "statistics"],
     "license": "MIT",
     "type": "project",
     "require": {
