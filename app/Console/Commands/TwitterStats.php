@@ -6,6 +6,7 @@ use App\Tweet;
 use App\Services\Statistics\Hashtags;
 use App\Services\Statistics\Mentions;
 use App\Services\Statistics\Tweets;
+use App\Services\Statistics\Users;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
@@ -57,12 +58,35 @@ class TwitterStats extends Command {
     {
         $stats = new StdClass;
 
+        $stats->topUsers = $this->computeTopUsers($searchId, 10);
         $stats->topHashtags = $this->computeTopHashtags($searchId, 10);
         $stats->topMentions = $this->computeTopMentions($searchId, 10);
         $stats->committedTweets = $this->computeCommittedTweets($searchId, 10);
 
         $this->search->stats = json_encode($stats);
         $this->search->save();
+    }
+
+    private function computeTopUsers($searchId, $count)
+    {
+        if ($this->debug)
+        {
+            $this->line('Compute statistics about users for "' . $this->search->q . '"');
+        }
+
+        $userComputer = new Users;
+        $topUsers = $userComputer->top($searchId, $count);
+
+        if ($this->debug)
+        {
+            $this->comment('Top ' . count($topUsers) . ' users');
+            foreach ($topUsers as $topUser)
+            {
+                $this->line($topUser->name . ' (' . $topUser->occurences . ')');
+            }
+        }
+
+        return $topUsers;
     }
 
     private function computeTopHashtags($searchId, $count)
