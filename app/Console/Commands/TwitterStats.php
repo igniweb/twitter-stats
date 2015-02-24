@@ -62,6 +62,7 @@ class TwitterStats extends Command {
         $stats->topHashtags = $this->computeTopHashtags($searchId, 10);
         $stats->topMentions = $this->computeTopMentions($searchId, 10);
         $stats->committedTweets = $this->computeCommittedTweets($searchId, 10);
+        $stats->computeTweetsDistributionPerHour = $this->computeTweetsDistributionPerHour($searchId);
 
         $this->search->stats = json_encode($stats);
         $this->search->save();
@@ -71,7 +72,7 @@ class TwitterStats extends Command {
     {
         if ($this->debug)
         {
-            $this->line('Compute statistics about users for "' . $this->search->q . '"');
+            $this->line('Compute statistics about top users for "' . $this->search->q . '"');
         }
 
         $userComputer = new Users;
@@ -93,7 +94,7 @@ class TwitterStats extends Command {
     {
         if ($this->debug)
         {
-            $this->line('Compute statistics about hashtags for "' . $this->search->q . '"');
+            $this->line('Compute statistics about top hashtags for "' . $this->search->q . '"');
         }
 
         $hashtagComputer = new Hashtags;
@@ -115,7 +116,7 @@ class TwitterStats extends Command {
     {
         if ($this->debug)
         {
-            $this->line('Compute statistics about mentions for "' . $this->search->q . '"');
+            $this->line('Compute statistics about top mentions for "' . $this->search->q . '"');
         }
 
         $mentionComputer = new Mentions;
@@ -137,7 +138,7 @@ class TwitterStats extends Command {
     {
         if ($this->debug)
         {
-            $this->line('Compute statistics about tweets for "' . $this->search->q . '"');
+            $this->line('Compute statistics about committed tweets for "' . $this->search->q . '"');
         }
 
         $tweetComputer = new Tweets;
@@ -155,6 +156,25 @@ class TwitterStats extends Command {
         }
 
         return $committedTweets;
+    }
+
+    private function computeTweetsDistributionPerHour($searchId)
+    {
+        if ($this->debug)
+        {
+            $this->line('Compute statistics about tweets distribution per hour for "' . $this->search->q . '"');
+        }
+
+        $tweetComputer = new Tweets;
+        $tweetsDistributionPerHour = $tweetComputer->distributionPerHour($searchId);
+
+        if ($this->debug)
+        {
+            $this->comment('Tweets distribution per hour');
+            print_r($tweetsDistributionPerHour);
+        }
+
+        return $tweetsDistributionPerHour;
     }
 
 }
