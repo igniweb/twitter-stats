@@ -42,13 +42,12 @@ class Tweets {
     public function distributionPerHour($searchId)
     {
         return DB::table('tweets')
-               ->addSelect(DB::raw('DAY(`tweets`.`published_at`) AS `day`'))
-               ->addSelect(DB::raw('HOUR(`tweets`.`published_at`) AS `hour`'))
+               ->addSelect(DB::raw('CONCAT(LPAD(DAY(`tweets`.`published_at`), 2, "0"), "-", LPAD(HOUR(`tweets`.`published_at`), 2, "0")) AS `day_hour`'))
                ->addSelect(DB::raw('COUNT(`tweets`.`id`) AS `occurences`'))
                ->join('search_tweet', 'search_tweet.tweet_id', '=', 'tweets.id')
                ->where('search_tweet.search_id', '=', $searchId)
-               ->groupBy('day')
-               ->groupBy('hour')
+               ->groupBy('day_hour')
+               ->orderBy('day_hour')
                ->get();
     }
 
