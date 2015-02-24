@@ -4,6 +4,7 @@ use InvalidArgumentException, StdClass;
 use App\Search;
 use App\Tweet;
 use App\Services\Statistics\Hashtags;
+use App\Services\Statistics\Mentions;
 use App\Services\Statistics\Tweets;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
@@ -57,6 +58,7 @@ class TwitterStats extends Command {
         $stats = new StdClass;
 
         $stats->topHashtags = $this->computeTopHashtags($searchId, 10);
+        $stats->topMentions = $this->computeTopMentions($searchId, 10);
         $stats->committedTweets = $this->computeCommittedTweets($searchId, 10);
 
         $this->search->stats = json_encode($stats);
@@ -83,6 +85,28 @@ class TwitterStats extends Command {
         }
 
         return $topHashtags;
+    }
+
+    private function computeTopMentions($searchId, $count)
+    {
+        if ($this->debug)
+        {
+            $this->line('Compute statistics about mentions for "' . $this->search->q . '"');
+        }
+
+        $mentionComputer = new Mentions;
+        $topMentions = $mentionComputer->top($searchId, $count);
+
+        if ($this->debug)
+        {
+            $this->comment('Top ' . count($topMentions) . ' mentions');
+            foreach ($topMentions as $topMention)
+            {
+                $this->line($topMention->name . ' (' . $topMention->occurences . ')');
+            }
+        }
+
+        return $topMentions;
     }
 
     private function computeCommittedTweets($searchId, $count)

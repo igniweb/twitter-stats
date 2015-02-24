@@ -2,7 +2,7 @@
 
 use DB;
 
-class Tweets {
+class Tweets extends AbstractStatistics {
 
     public function commitments($searchId, $count = 10)
     {
@@ -37,13 +37,6 @@ class Tweets {
         }
 
         return $commitments;
-    }
-
-    private function tweetIds($searchId)
-    {
-        $tweets = DB::table('search_tweet')->select('tweet_id')->where('search_id', '=', $searchId)->get();
-
-        return array_pluck($tweets, 'tweet_id');
     }
 
 }

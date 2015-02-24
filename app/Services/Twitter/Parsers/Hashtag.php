@@ -10,7 +10,7 @@ class Hashtag {
         {
             foreach ($status->entities->hashtags as $hashtag)
             {
-                $hashtags[] = $hashtag->text;
+                $hashtags[] = mb_strtolower($hashtag->text);
             }
         }
 

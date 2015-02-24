@@ -10,7 +10,7 @@ class Mention {
         {
             foreach ($status->entities->user_mentions as $mention)
             {
-                $mentions[] = $mention->screen_name;
+                $mentions[] = mb_strtolower($mention->screen_name);
             }
         }
 
