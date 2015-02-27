@@ -1,0 +1,6 @@
+{
+  "name": "igniweb/twitter-stats",
+  "devDependencies": {
+    "amcharts": "~3.13.0"
+  }
+}
