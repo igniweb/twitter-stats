@@ -17,11 +17,14 @@
                 <div id="top_hashtags" style="width:600px; height:400px;"></div>
             </div>
             <div class="col">
-                <div id="tweets_distribution_per_hour" style="width: 100%; height: 400px;"></div>
+                <div id="top_mentions" style="width: 500px; height: 600px;"></div>
             </div>
         </div>
         <div class="row">
-            <pre><?php print_r($stats); ?></pre>
+            <div id="tweets_distribution_per_hour" style="width: 100%; height: 400px;"></div>
+        </div>
+        <div class="row">
+            <pre><?php print_r($stats['committedTweets']); ?></pre>
         </div>
     </div>
     <script src="/dist/js/scripts.min.js?t={{ file_get_contents(base_path('resources/assets/.version')) }}"></script>
@@ -31,6 +34,7 @@
 
             var topUsers = <?php echo json_encode($stats['topUsers']); ?>;
             var topHashtags = <?php echo json_encode($stats['topHashtags']); ?>;
+            var topMentions = <?php echo json_encode($stats['topMentions']); ?>;
             var tweetsDistributionPerHour = <?php echo json_encode($stats['tweetsDistributionPerHour']); ?>;
 
             chart = new AmCharts.AmFunnelChart();
@@ -61,6 +65,35 @@
             chart.depth3D = 10;
             chart.angle = 15;                        
             chart.write('top_hashtags');
+
+            chart = new AmCharts.AmSerialChart();
+            chart.dataProvider = topMentions;
+            chart.categoryField = 'name';
+            chart.rotate = true;
+            chart.depth3D = 20;
+            chart.angle = 30;
+            var categoryAxis = chart.categoryAxis;
+            categoryAxis.gridPosition = 'start';
+            categoryAxis.axisColor = '#dadada';
+            categoryAxis.fillAlpha = 1;
+            categoryAxis.gridAlpha = 0;
+            categoryAxis.fillColor = '#fafafa';
+            var valueAxis = new AmCharts.ValueAxis();
+            valueAxis.axisColor = '#dadada';
+            valueAxis.title = 'Occurences';
+            valueAxis.gridAlpha = 0.1;
+            chart.addValueAxis(valueAxis);
+            var graph = new AmCharts.AmGraph();
+            graph.title = 'Top user mentions';
+            graph.valueField = 'occurences';
+            graph.type = 'column';
+            graph.balloonText = 'Occurences of [[category]]:[[value]]';
+            graph.lineAlpha = 0;
+            graph.fillColors = '#bf1c25';
+            graph.fillAlphas = 1;
+            chart.addGraph(graph);
+            chart.creditsPosition = 'top-right';
+            chart.write('top_mentions');
 
             chart = new AmCharts.AmSerialChart();
             chart.dataProvider = tweetsDistributionPerHour;
