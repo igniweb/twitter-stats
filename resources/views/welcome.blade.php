@@ -16,6 +16,6 @@
             <pre><?php print_r(json_decode($search->stats, true)); ?></pre>
         </div>
     </div>
-    <script src="/dist/js/scripts.min.js"></script>
+    <script src="/dist/js/scripts.min.js?t={{ file_get_contents(base_path('resources/assets/.version')) }}"></script>
 </body>
 </html>

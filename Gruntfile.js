@@ -7,13 +7,14 @@ module.exports = function(grunt) {
             assets: 'resources/assets',
             vendor: 'resources/assets/vendor',
             dist: 'public/dist'
-        },
-        configPath: 'resources/assets/grunt'
+        }
     });
 
     grunt.registerTask('version', function () {
         grunt.file.write('resources/assets/.version', (new Date()).getTime());
     });
+
+    grunt.registerTask('default', ['dev']);
 
     grunt.registerTask('dev', ['version', 'clean:dist', 'concat'/*, 'cssmin'*/, 'uglify'/*, 'copy' */]);
 };
