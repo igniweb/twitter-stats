@@ -62,7 +62,7 @@ class TwitterStats extends Command {
         $stats->topHashtags = $this->computeTopHashtags($searchId, 10);
         $stats->topMentions = $this->computeTopMentions($searchId, 10);
         $stats->committedTweets = $this->computeCommittedTweets($searchId, 10);
-        $stats->computeTweetsDistributionPerHour = $this->computeTweetsDistributionPerHour($searchId);
+        $stats->tweetsDistributionPerHour = $this->computeTweetsDistributionPerHour($searchId);
 
         $this->search->stats = json_encode($stats);
         $this->search->save();
