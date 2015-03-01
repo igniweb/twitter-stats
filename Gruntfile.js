@@ -16,5 +16,5 @@ module.exports = function(grunt) {
 
     grunt.registerTask('default', ['dev']);
 
-    grunt.registerTask('dev', ['version', 'clean:dist', 'concat', 'cssmin', 'uglify', 'copy']);
+    grunt.registerTask('dev', ['version', 'clean', 'concat', 'cssmin', 'uglify', 'copy']);
 };
